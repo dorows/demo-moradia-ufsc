@@ -108,6 +108,11 @@ function App() {
   }, [filters]);
 
   const bestListing = [...filteredListings].sort((a, b) => b.score - a.score)[0];
+  const featuredListing = bestListing ?? listings[0];
+  const animatedListings = [
+    featuredListing,
+    ...listings.filter((listing) => listing.id !== featuredListing.id).slice(0, 3),
+  ];
 
   function updateFilter(key, value) {
     setFilters((current) => ({ ...current, [key]: value }));
@@ -155,25 +160,69 @@ function App() {
             </div>
           </div>
 
-          <aside className="signal-card" aria-label="Resumo do melhor anúncio">
-            <div className="pulse-dot" />
-            <p className="signal-label">Melhor oportunidade agora</p>
-            <h2>{bestListing?.title ?? "Nenhum imóvel encontrado"}</h2>
-            {bestListing ? (
-              <>
-                <div className="price-line">
-                  <strong>{currency.format(bestListing.price)}</strong>
-                  <span>{bestListing.distance.toFixed(1)} km da UFSC</span>
+          <aside className="signal-card animated-signal" aria-label="Exemplo animado do fluxo de scraping">
+            <div className="signal-header">
+              <div>
+                <span className="status-pill">
+                  <span aria-hidden="true" />
+                  Scraper ativo
+                </span>
+                <p className="signal-label">Exemplo em tempo real</p>
+              </div>
+              <div className="scan-indicator" aria-hidden="true">
+                <span />
+                <span />
+                <span />
+              </div>
+            </div>
+
+            <div className="scrape-window">
+              <div className="window-bar" aria-hidden="true">
+                <span />
+                <span />
+                <span />
+              </div>
+              <div className="scan-line" aria-hidden="true" />
+              <div className="feed-list">
+                {animatedListings.map((listing, index) => (
+                  <div className={`feed-row ${index === 0 ? "is-selected" : ""}`} key={listing.id}>
+                    <span className="source-dot" aria-hidden="true" />
+                    <div>
+                      <strong>
+                        {listing.type} em {listing.neighborhood}
+                      </strong>
+                      <small>
+                        {listing.source} · {listing.foundAt}
+                      </small>
+                    </div>
+                    <b>{currency.format(listing.price)}</b>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="pipeline-steps" aria-label="Etapas automatizadas do MVP">
+              <span>Coletar</span>
+              <i aria-hidden="true" />
+              <span>Limpar</span>
+              <i aria-hidden="true" />
+              <span>Rankear</span>
+            </div>
+
+            <div className="alert-preview">
+              <div className="score-badge">
+                <small>score</small>
+                <strong>{featuredListing.score}</strong>
+              </div>
+              <div>
+                <p className="alert-kicker">Alerta pronto</p>
+                <h2>{featuredListing.title}</h2>
+                <div className="alert-tags">
+                  <span>{featuredListing.distance.toFixed(1)} km da UFSC</span>
+                  <span>{currency.format(featuredListing.price)}</span>
                 </div>
-                <div className="score-ring">{bestListing.score}</div>
-                <p>
-                  Score combina preço, distância, bairro e sinais do anúncio para priorizar
-                  opções mais úteis para estudantes.
-                </p>
-              </>
-            ) : (
-              <p>Ajuste os filtros para ampliar a busca.</p>
-            )}
+              </div>
+            </div>
           </aside>
         </div>
       </section>
