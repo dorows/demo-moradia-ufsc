@@ -1,14 +1,18 @@
 {
+  "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:api": "node scripts/dev-server.mjs",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@vitejs/plugin-react": "latest",
-    "vite": "latest",
+    "got-scraping": "^4.2.1",
     "react": "latest",
     "react-dom": "latest"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@vitejs/plugin-react": "latest",
+    "vite": "latest"
+  }
 }
