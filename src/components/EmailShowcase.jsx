@@ -66,7 +66,7 @@ export default function EmailShowcase() {
             <div className="email-preview__phone">
               <div className="email-preview__notch" />
               <div className="email-preview__screen">
-                <p className="email-preview__title">Moradia UFSC</p>
+                <p className="email-preview__title">Moradias UFSC</p>
                 <p className="email-preview__subtitle">3 novos alertas</p>
                 {PREVIEW_ALERTS.map((alert, index) => (
                   <div

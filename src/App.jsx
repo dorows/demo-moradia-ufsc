@@ -105,17 +105,11 @@ function App() {
 
   return (
     <main id="top">
-      <div className="page-bg" aria-hidden="true">
-        <div className="page-bg__orb page-bg__orb--1" />
-        <div className="page-bg__orb page-bg__orb--2" />
-        <div className="page-bg__grid" />
-      </div>
-
       <section className="hero section-shell">
         <nav className="topbar" aria-label="Navegação principal">
-          <a className="brand" href="#top" aria-label="Moradia UFSC">
+          <a className="brand" href="#top" aria-label="Moradias UFSC">
             <span>M</span>
-            Moradia UFSC
+            Moradias UFSC
           </a>
           <div className="topbar__links">
             <a className="nav-link" href="#olx">
