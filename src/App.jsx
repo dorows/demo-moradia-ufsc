@@ -1,82 +1,4 @@
-import { useMemo, useState } from "react";
-
-const listings = [
-  {
-    id: 1,
-    title: "Quarto individual mobiliado",
-    type: "Quarto",
-    neighborhood: "Trindade",
-    price: 950,
-    distance: 0.8,
-    source: "Marketplace",
-    foundAt: "Hoje, 08:40",
-    score: 94,
-    tags: ["perto da UFSC", "contas inclusas"],
-  },
-  {
-    id: 2,
-    title: "Kitnet compacta no Pantanal",
-    type: "Kitnet",
-    neighborhood: "Pantanal",
-    price: 1450,
-    distance: 1.2,
-    source: "OLX",
-    foundAt: "Hoje, 07:12",
-    score: 88,
-    tags: ["recém encontrado", "sem garagem"],
-  },
-  {
-    id: 3,
-    title: "Apartamento compartilhado",
-    type: "Apartamento",
-    neighborhood: "Carvoeira",
-    price: 1200,
-    distance: 0.7,
-    source: "Grupo público",
-    foundAt: "Ontem, 21:05",
-    score: 91,
-    tags: ["bom custo-benefício", "dividir despesas"],
-  },
-  {
-    id: 4,
-    title: "Studio arejado próximo ao campus",
-    type: "Kitnet",
-    neighborhood: "Córrego Grande",
-    price: 1750,
-    distance: 2.1,
-    source: "Imobiliária",
-    foundAt: "Ontem, 18:30",
-    score: 76,
-    tags: ["contrato formal", "atenção ao preço"],
-  },
-  {
-    id: 5,
-    title: "Vaga em república estudantil",
-    type: "Quarto",
-    neighborhood: "Serrinha",
-    price: 780,
-    distance: 1.6,
-    source: "Instagram",
-    foundAt: "Hoje, 10:18",
-    score: 84,
-    tags: ["menor preço", "ambiente estudantil"],
-  },
-  {
-    id: 6,
-    title: "Apartamento 2 quartos para dividir",
-    type: "Apartamento",
-    neighborhood: "Santa Mônica",
-    price: 1550,
-    distance: 2.8,
-    source: "Zap Imóveis",
-    foundAt: "Há 2 dias",
-    score: 72,
-    tags: ["mais espaço", "ônibus próximo"],
-  },
-];
-
-const neighborhoods = ["Todos", ...new Set(listings.map((item) => item.neighborhood))];
-const propertyTypes = ["Todos", ...new Set(listings.map((item) => item.type))];
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 const currency = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -84,13 +6,72 @@ const currency = new Intl.NumberFormat("pt-BR", {
   maximumFractionDigits: 0,
 });
 
+const FORMSPREE_ID = import.meta.env.VITE_FORMSPREE_ID;
+
+function formatUpdatedAt(isoString) {
+  if (!isoString) return "";
+  return new Intl.DateTimeFormat("pt-BR", {
+    dateStyle: "short",
+    timeStyle: "short",
+  }).format(new Date(isoString));
+}
+
+function ListingSkeleton() {
+  return (
+    <article className="listing-card listing-card--skeleton" aria-hidden="true">
+      <div className="skeleton skeleton-thumb" />
+      <div className="skeleton skeleton-line short" />
+      <div className="skeleton skeleton-line" />
+      <div className="skeleton skeleton-line medium" />
+    </article>
+  );
+}
+
 function App() {
+  const [listings, setListings] = useState([]);
+  const [meta, setMeta] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
     type: "Todos",
     neighborhood: "Todos",
     maxPrice: 1800,
     maxDistance: 3,
   });
+  const [email, setEmail] = useState("");
+  const [formStatus, setFormStatus] = useState("idle");
+
+  const loadListings = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/listings");
+      if (!response.ok) {
+        throw new Error(`Erro ${response.status} ao carregar anúncios`);
+      }
+
+      const data = await response.json();
+      setListings(data.listings ?? []);
+      setMeta(data.meta ?? null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao carregar anúncios");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadListings();
+  }, [loadListings]);
+
+  const propertyTypes = useMemo(() => {
+    return ["Todos", ...new Set(listings.map((item) => item.type))];
+  }, [listings]);
+
+  const neighborhoods = useMemo(() => {
+    return ["Todos", ...new Set(listings.map((item) => item.neighborhood))];
+  }, [listings]);
 
   const filteredListings = useMemo(() => {
     return listings.filter((listing) => {
@@ -105,21 +86,54 @@ function App() {
         listing.distance <= filters.maxDistance
       );
     });
-  }, [filters]);
+  }, [filters, listings]);
 
   const bestListing = [...filteredListings].sort((a, b) => b.score - a.score)[0];
   const featuredListing = bestListing ?? listings[0];
-  const animatedListings = [
-    featuredListing,
-    ...listings.filter((listing) => listing.id !== featuredListing.id).slice(0, 3),
-  ];
+  const animatedListings = featuredListing
+    ? [
+        featuredListing,
+        ...listings.filter((listing) => listing.id !== featuredListing.id).slice(0, 3),
+      ]
+    : [];
 
   function updateFilter(key, value) {
     setFilters((current) => ({ ...current, [key]: value }));
   }
 
+  async function handleEmailSubmit(event) {
+    event.preventDefault();
+
+    if (!FORMSPREE_ID) {
+      setFormStatus("missing-config");
+      return;
+    }
+
+    setFormStatus("submitting");
+
+    try {
+      const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Falha ao enviar");
+      }
+
+      setEmail("");
+      setFormStatus("success");
+    } catch {
+      setFormStatus("error");
+    }
+  }
+
   return (
-    <main>
+    <main id="top">
       <section className="hero section-shell">
         <nav className="topbar" aria-label="Navegação principal">
           <a className="brand" href="#top" aria-label="Moradia UFSC">
@@ -127,17 +141,17 @@ function App() {
             Moradia UFSC
           </a>
           <a className="nav-link" href="#demo">
-            Ver demo
+            Ver imóveis
           </a>
         </nav>
 
         <div className="hero-grid">
           <div className="hero-copy">
-            <p className="eyebrow">MVP de scraping para estudantes</p>
+            <p className="eyebrow">Beta para estudantes da UFSC</p>
             <h1>Aluguéis perto da UFSC antes que os bons anúncios sumam.</h1>
             <p className="hero-text">
-              Uma central que monitora fontes públicas, remove duplicados e mostra preço,
-              distância e sinais de custo-benefício para quem precisa morar perto do campus.
+              Monitoramos a OLX, ranqueamos por preço e distância do campus e mostramos
+              o que importa para quem precisa morar perto da universidade.
             </p>
             <div className="hero-actions">
               <a className="button primary" href="#demo">
@@ -147,27 +161,31 @@ function App() {
                 Como funciona
               </a>
             </div>
-            <div className="metrics" aria-label="Indicadores do MVP">
+            <div className="metrics" aria-label="Indicadores do beta">
               <span>
-                <strong>6</strong> anúncios simulados
+                <strong>{loading ? "…" : listings.length}</strong> anúncios ao vivo
               </span>
               <span>
                 <strong>3 km</strong> raio inicial
               </span>
               <span>
-                <strong>4</strong> fontes monitoradas
+                <strong>1</strong> fonte ativa (OLX)
               </span>
             </div>
           </div>
 
-          <aside className="signal-card animated-signal" aria-label="Exemplo animado do fluxo de scraping">
+          <aside className="signal-card animated-signal" aria-label="Fluxo de scraping em tempo real">
             <div className="signal-header">
               <div>
                 <span className="status-pill">
                   <span aria-hidden="true" />
-                  Scraper ativo
+                  {meta?.source === "olx" ? "Scraper ativo" : "Modo demonstração"}
                 </span>
-                <p className="signal-label">Exemplo em tempo real</p>
+                <p className="signal-label">
+                  {meta?.updatedAt
+                    ? `Atualizado ${formatUpdatedAt(meta.updatedAt)}`
+                    : "Carregando feed…"}
+                </p>
               </div>
               <div className="scan-indicator" aria-hidden="true">
                 <span />
@@ -184,24 +202,37 @@ function App() {
               </div>
               <div className="scan-line" aria-hidden="true" />
               <div className="feed-list">
-                {animatedListings.map((listing, index) => (
-                  <div className={`feed-row ${index === 0 ? "is-selected" : ""}`} key={listing.id}>
+                {animatedListings.length > 0 ? (
+                  animatedListings.map((listing, index) => (
+                    <div
+                      className={`feed-row ${index === 0 ? "is-selected" : ""}`}
+                      key={listing.id}
+                    >
+                      <span className="source-dot" aria-hidden="true" />
+                      <div>
+                        <strong>
+                          {listing.type} em {listing.neighborhood}
+                        </strong>
+                        <small>
+                          {listing.source} · {listing.foundAt}
+                        </small>
+                      </div>
+                      <b>{currency.format(listing.price)}</b>
+                    </div>
+                  ))
+                ) : (
+                  <div className="feed-row feed-row--placeholder">
                     <span className="source-dot" aria-hidden="true" />
                     <div>
-                      <strong>
-                        {listing.type} em {listing.neighborhood}
-                      </strong>
-                      <small>
-                        {listing.source} · {listing.foundAt}
-                      </small>
+                      <strong>Aguardando anúncios…</strong>
+                      <small>OLX · Florianópolis</small>
                     </div>
-                    <b>{currency.format(listing.price)}</b>
                   </div>
-                ))}
+                )}
               </div>
             </div>
 
-            <div className="pipeline-steps" aria-label="Etapas automatizadas do MVP">
+            <div className="pipeline-steps" aria-label="Etapas automatizadas">
               <span>Coletar</span>
               <i aria-hidden="true" />
               <span>Limpar</span>
@@ -209,20 +240,22 @@ function App() {
               <span>Rankear</span>
             </div>
 
-            <div className="alert-preview">
-              <div className="score-badge">
-                <small>score</small>
-                <strong>{featuredListing.score}</strong>
-              </div>
-              <div>
-                <p className="alert-kicker">Alerta pronto</p>
-                <h2>{featuredListing.title}</h2>
-                <div className="alert-tags">
-                  <span>{featuredListing.distance.toFixed(1)} km da UFSC</span>
-                  <span>{currency.format(featuredListing.price)}</span>
+            {featuredListing && (
+              <div className="alert-preview">
+                <div className="score-badge">
+                  <small>score</small>
+                  <strong>{featuredListing.score}</strong>
+                </div>
+                <div>
+                  <p className="alert-kicker">Melhor do momento</p>
+                  <h2>{featuredListing.title}</h2>
+                  <div className="alert-tags">
+                    <span>{featuredListing.distance.toFixed(1)} km da UFSC</span>
+                    <span>{currency.format(featuredListing.price)}</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </aside>
         </div>
       </section>
@@ -231,34 +264,52 @@ function App() {
         <article>
           <span>01</span>
           <h3>Busca centralizada</h3>
-          <p>Reúne anúncios dispersos em marketplaces, grupos e imobiliárias.</p>
+          <p>Começamos pela OLX e expandimos para outras fontes em breve.</p>
         </article>
         <article>
           <span>02</span>
           <h3>Ranking prático</h3>
-          <p>Prioriza distância, preço e sinais úteis para a rotina universitária.</p>
+          <p>Prioriza distância, preço e anúncios recém-publicados.</p>
         </article>
         <article>
           <span>03</span>
-          <h3>Alertas rápidos</h3>
-          <p>Base pronta para avisar quando surgir algo dentro do perfil desejado.</p>
+          <h3>Alertas em breve</h3>
+          <p>Cadastre seu email para ser avisado quando novas fontes entrarem.</p>
         </article>
       </section>
 
       <section className="demo section-shell" id="demo">
         <div className="section-heading">
-          <p className="eyebrow">Demo filtrável</p>
-          <h2>Radar de moradias próximas ao campus</h2>
+          <p className="eyebrow">Radar ao vivo</p>
+          <h2>Moradias próximas ao campus</h2>
           <p>
-            Dados fictícios para demonstrar a experiência final do produto enquanto o scraper
-            real é conectado.
+            Anúncios reais da OLX para Florianópolis, filtrados pelos bairros perto da UFSC.
+            {meta?.updatedAt && (
+              <>
+                {" "}
+                Última atualização: {formatUpdatedAt(meta.updatedAt)}.
+              </>
+            )}
           </p>
+          {meta?.message && <p className="status-banner">{meta.message}</p>}
+          {error && (
+            <div className="status-banner status-banner--error">
+              <span>{error}</span>
+              <button type="button" className="button secondary small" onClick={loadListings}>
+                Tentar novamente
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="search-panel">
           <label>
             Tipo
-            <select value={filters.type} onChange={(event) => updateFilter("type", event.target.value)}>
+            <select
+              value={filters.type}
+              onChange={(event) => updateFilter("type", event.target.value)}
+              disabled={loading}
+            >
               {propertyTypes.map((type) => (
                 <option key={type}>{type}</option>
               ))}
@@ -270,6 +321,7 @@ function App() {
             <select
               value={filters.neighborhood}
               onChange={(event) => updateFilter("neighborhood", event.target.value)}
+              disabled={loading}
             >
               {neighborhoods.map((neighborhood) => (
                 <option key={neighborhood}>{neighborhood}</option>
@@ -286,6 +338,7 @@ function App() {
               step="50"
               value={filters.maxPrice}
               onChange={(event) => updateFilter("maxPrice", Number(event.target.value))}
+              disabled={loading}
             />
           </label>
 
@@ -298,37 +351,59 @@ function App() {
               step="0.1"
               value={filters.maxDistance}
               onChange={(event) => updateFilter("maxDistance", Number(event.target.value))}
+              disabled={loading}
             />
           </label>
         </div>
 
         <div className="result-bar">
-          <strong>{filteredListings.length}</strong> imóveis encontrados no perfil atual
+          <strong>{loading ? "…" : filteredListings.length}</strong> imóveis encontrados no
+          perfil atual
         </div>
 
         <div className="listing-grid">
-          {filteredListings.map((listing) => (
-            <article className="listing-card" key={listing.id}>
-              <div className="listing-topline">
-                <span>{listing.type}</span>
-                <strong>{listing.score}</strong>
-              </div>
-              <h3>{listing.title}</h3>
-              <p className="location">{listing.neighborhood} · {listing.distance.toFixed(1)} km da UFSC</p>
-              <div className="listing-price">{currency.format(listing.price)}</div>
-              <div className="tag-list">
-                {listing.tags.map((tag) => (
-                  <span key={tag}>{tag}</span>
-                ))}
-              </div>
-              <footer>
-                <span>{listing.source}</span>
-                <span>{listing.foundAt}</span>
-              </footer>
-            </article>
-          ))}
+          {loading &&
+            Array.from({ length: 6 }).map((_, index) => <ListingSkeleton key={index} />)}
 
-          {filteredListings.length === 0 && (
+          {!loading &&
+            filteredListings.map((listing) => (
+              <a
+                className="listing-card listing-card--link"
+                href={listing.url}
+                key={listing.id}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {listing.imageUrl && (
+                  <img
+                    className="listing-thumb"
+                    src={listing.imageUrl}
+                    alt=""
+                    loading="lazy"
+                  />
+                )}
+                <div className="listing-topline">
+                  <span>{listing.type}</span>
+                  <strong>{listing.score}</strong>
+                </div>
+                <h3>{listing.title}</h3>
+                <p className="location">
+                  {listing.neighborhood} · {listing.distance.toFixed(1)} km da UFSC
+                </p>
+                <div className="listing-price">{currency.format(listing.price)}</div>
+                <div className="tag-list">
+                  {listing.tags.map((tag) => (
+                    <span key={tag}>{tag}</span>
+                  ))}
+                </div>
+                <footer>
+                  <span>{listing.source}</span>
+                  <span>{listing.foundAt}</span>
+                </footer>
+              </a>
+            ))}
+
+          {!loading && filteredListings.length === 0 && (
             <div className="empty-state">
               <h3>Nenhum imóvel nesse recorte</h3>
               <p>Amplie o preço ou a distância para visualizar mais oportunidades.</p>
@@ -345,7 +420,7 @@ function App() {
         <div className="workflow-grid">
           <article>
             <span>Coletar</span>
-            <p>Scrapers buscam anúncios públicos com termos ligados à UFSC e bairros próximos.</p>
+            <p>Buscamos anúncios públicos na OLX com foco nos bairros da UFSC.</p>
           </article>
           <article>
             <span>Normalizar</span>
@@ -357,20 +432,45 @@ function App() {
           </article>
           <article>
             <span>Alertar</span>
-            <p>Estudantes recebem oportunidades alinhadas ao orçamento e à distância máxima.</p>
+            <p>Em breve: avisos por email quando surgir algo no seu perfil.</p>
           </article>
         </div>
       </section>
 
       <section className="cta section-shell">
         <div>
-          <p className="eyebrow">Próximo passo</p>
-          <h2>Valide demanda antes de conectar o scraper real.</h2>
+          <p className="eyebrow">Lista de espera</p>
+          <h2>Quer receber alertas quando surgir a moradia ideal?</h2>
         </div>
-        <form className="interest-form" onSubmit={(event) => event.preventDefault()}>
-          <input type="email" placeholder="seu@email.com" aria-label="Email" />
-          <button type="submit">Quero receber alertas</button>
+        <form className="interest-form" onSubmit={handleEmailSubmit}>
+          <input
+            type="email"
+            placeholder="seu@email.com"
+            aria-label="Email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            required
+            disabled={formStatus === "submitting"}
+          />
+          <button type="submit" disabled={formStatus === "submitting"}>
+            {formStatus === "submitting" ? "Enviando…" : "Quero receber alertas"}
+          </button>
         </form>
+        {formStatus === "success" && (
+          <p className="form-feedback form-feedback--success">
+            Email cadastrado! Avisaremos quando houver novidades.
+          </p>
+        )}
+        {formStatus === "error" && (
+          <p className="form-feedback form-feedback--error">
+            Não foi possível enviar. Tente novamente em instantes.
+          </p>
+        )}
+        {formStatus === "missing-config" && (
+          <p className="form-feedback form-feedback--error">
+            Formulário ainda não configurado. Defina VITE_FORMSPREE_ID no Vercel.
+          </p>
+        )}
       </section>
     </main>
   );
