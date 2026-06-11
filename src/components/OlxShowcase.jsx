@@ -144,39 +144,39 @@ export default function OlxShowcase({
 
         {featuredListing && (
           <article className="olx-featured">
-            <div className="olx-featured__glow" aria-hidden="true" />
-            <img
-              className="olx-featured__image"
-              src={featuredListing.imageUrl || "/showcase/default.svg"}
-              alt=""
-              loading="lazy"
-              onError={(event) => {
-                event.currentTarget.src = "/showcase/default.svg";
-              }}
-            />
-            <div className="olx-featured__body">
-              <div className="olx-featured__top">
-                <span className="olx-featured__score">
-                  score <strong>{featuredListing.score}</strong>
-                </span>
-                <span className="olx-featured__source">via OLX</span>
-              </div>
-              <h3>{featuredListing.title}</h3>
-              <p>
-                {featuredListing.neighborhood} · {featuredListing.distance.toFixed(1)} km da UFSC
-              </p>
-              <div className="olx-featured__footer">
+            <div className="olx-featured__badge">Melhor score agora</div>
+            <div className="olx-featured__score-ring">
+              <strong>{featuredListing.score}</strong>
+              <span>score</span>
+            </div>
+            <h3>{featuredListing.title}</h3>
+            <div className="olx-featured__stats">
+              <div>
                 <strong>{currency.format(featuredListing.price)}</strong>
-                <a
-                  href={featuredListing.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="button primary small"
-                >
-                  Ver no OLX →
-                </a>
+                <span>/mês</span>
+              </div>
+              <div>
+                <strong>{featuredListing.distance.toFixed(1)} km</strong>
+                <span>da UFSC</span>
+              </div>
+              <div>
+                <strong>{featuredListing.neighborhood}</strong>
+                <span>bairro</span>
               </div>
             </div>
+            <div className="tag-list">
+              {featuredListing.tags.map((tag) => (
+                <span key={tag}>{tag}</span>
+              ))}
+            </div>
+            <a
+              href={featuredListing.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="olx-featured__cta"
+            >
+              Abrir anúncio completo na OLX →
+            </a>
           </article>
         )}
       </div>

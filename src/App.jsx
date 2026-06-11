@@ -21,9 +21,9 @@ function formatUpdatedAt(isoString) {
 function ListingSkeleton() {
   return (
     <article className="listing-card listing-card--skeleton" aria-hidden="true">
-      <div className="skeleton skeleton-thumb" />
       <div className="skeleton skeleton-line short" />
       <div className="skeleton skeleton-line" />
+      <div className="skeleton skeleton-stats" />
       <div className="skeleton skeleton-line medium" />
     </article>
   );
@@ -245,36 +245,42 @@ function App() {
                 key={listing.id}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label={`Ver ${listing.title} na OLX`}
                 style={{ "--card-index": index % 6 }}
               >
-                <div className="listing-card__media">
-                  <img
-                    src={listing.imageUrl || "/showcase/default.svg"}
-                    alt=""
-                    loading="lazy"
-                    onError={(event) => {
-                      event.currentTarget.src = "/showcase/default.svg";
-                    }}
-                  />
-                  <span className="listing-card__score">{listing.score}</span>
-                  <span className="listing-card__source">OLX</span>
-                </div>
-                <div className="listing-card__body">
+                <div className="listing-card__header">
                   <span className="listing-card__type">{listing.type}</span>
-                  <h3>{listing.title}</h3>
-                  <p className="location">
-                    {listing.neighborhood} · {listing.distance.toFixed(1)} km
-                  </p>
-                  <div className="listing-price">{currency.format(listing.price)}</div>
-                  <div className="tag-list">
-                    {listing.tags.map((tag) => (
-                      <span key={tag}>{tag}</span>
-                    ))}
+                  <span className="listing-card__score" title="Score de custo-benefício">
+                    {listing.score}
+                  </span>
+                </div>
+                <h3>{listing.title}</h3>
+                <div className="listing-card__stats">
+                  <div>
+                    <strong>{currency.format(listing.price)}</strong>
+                    <span>aluguel/mês</span>
                   </div>
-                  <footer>
-                    <span>{listing.foundAt}</span>
-                    <span className="listing-card__cta">Abrir →</span>
-                  </footer>
+                  <div>
+                    <strong>{listing.distance.toFixed(1)} km</strong>
+                    <span>da UFSC</span>
+                  </div>
+                  <div>
+                    <strong>{listing.neighborhood}</strong>
+                    <span>bairro</span>
+                  </div>
+                </div>
+                <div className="tag-list">
+                  {listing.tags.map((tag) => (
+                    <span key={tag}>{tag}</span>
+                  ))}
+                </div>
+                <div className="listing-card__meta">
+                  <span>{listing.source}</span>
+                  <span>{listing.foundAt}</span>
+                </div>
+                <div className="listing-card__cta-bar">
+                  Ver fotos e detalhes na OLX
+                  <span aria-hidden="true">→</span>
                 </div>
               </a>
             ))}

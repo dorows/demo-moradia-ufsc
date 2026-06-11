@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" fill="none">
-  <rect width="400" height="260" fill="#eef2fc"/>
-  <rect x="50" y="32" width="300" height="196" rx="12" fill="#fff" stroke="#c8d0e0" stroke-width="2"/>
-  <rect x="70" y="52" width="120" height="90" rx="6" fill="#4169e1" opacity="0.18"/>
-  <rect x="206" y="52" width="124" height="40" rx="6" fill="#c8d0e0" opacity="0.6"/>
-  <rect x="206" y="102" width="124" height="40" rx="6" fill="#c8d0e0" opacity="0.4"/>
-  <rect x="70" y="158" width="260" height="50" rx="6" fill="#4169e1" opacity="0.12"/>
-  <text x="200" y="240" text-anchor="middle" fill="#1a3a8f" font-family="system-ui,sans-serif" font-size="14" font-weight="700">Apartamento</text>
-</svg>

@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" fill="none">
-  <rect width="400" height="260" fill="#eef2fc"/>
-  <rect x="40" y="48" width="320" height="164" rx="12" fill="#fff" stroke="#c8d0e0" stroke-width="2"/>
-  <rect x="64" y="72" width="120" height="80" rx="6" fill="#4169e1" opacity="0.15"/>
-  <rect x="200" y="72" width="136" height="12" rx="4" fill="#c8d0e0"/>
-  <rect x="200" y="96" width="96" height="12" rx="4" fill="#c8d0e0"/>
-  <rect x="64" y="168" width="272" height="28" rx="6" fill="#4169e1" opacity="0.2"/>
-  <text x="200" y="240" text-anchor="middle" fill="#4169e1" font-family="system-ui,sans-serif" font-size="14" font-weight="700">Quarto</text>
-</svg>
