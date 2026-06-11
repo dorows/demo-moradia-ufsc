@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" fill="none">
+  <rect width="400" height="260" fill="#f3ebfc"/>
+  <rect x="60" y="40" width="280" height="180" rx="12" fill="#fff" stroke="#c8d0e0" stroke-width="2"/>
+  <rect x="80" y="60" width="80" height="60" rx="6" fill="#6e0ad6" opacity="0.12"/>
+  <rect x="180" y="60" width="140" height="60" rx="6" fill="#4169e1" opacity="0.1"/>
+  <rect x="80" y="140" width="240" height="56" rx="6" fill="#eef2fc"/>
+  <circle cx="120" cy="168" r="16" fill="#4169e1" opacity="0.25"/>
+  <text x="200" y="240" text-anchor="middle" fill="#6e0ad6" font-family="system-ui,sans-serif" font-size="14" font-weight="700">Kitnet</text>
+</svg>

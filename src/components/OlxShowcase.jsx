@@ -145,16 +145,15 @@ export default function OlxShowcase({
         {featuredListing && (
           <article className="olx-featured">
             <div className="olx-featured__glow" aria-hidden="true" />
-            {featuredListing.imageUrl ? (
-              <img
-                className="olx-featured__image"
-                src={featuredListing.imageUrl}
-                alt=""
-                loading="lazy"
-              />
-            ) : (
-              <div className="olx-featured__image olx-featured__image--empty" />
-            )}
+            <img
+              className="olx-featured__image"
+              src={featuredListing.imageUrl || "/showcase/default.svg"}
+              alt=""
+              loading="lazy"
+              onError={(event) => {
+                event.currentTarget.src = "/showcase/default.svg";
+              }}
+            />
             <div className="olx-featured__body">
               <div className="olx-featured__top">
                 <span className="olx-featured__score">

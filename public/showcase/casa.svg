@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" fill="none">
+  <rect width="400" height="260" fill="#f8f7f4"/>
+  <path d="M200 44 L340 140 L340 210 L60 210 L60 140 Z" fill="#fff" stroke="#c8d0e0" stroke-width="2" stroke-linejoin="round"/>
+  <rect x="120" y="150" width="60" height="60" rx="4" fill="#4169e1" opacity="0.15"/>
+  <rect x="220" y="150" width="60" height="60" rx="4" fill="#4169e1" opacity="0.15"/>
+  <rect x="175" y="175" width="50" height="35" rx="4" fill="#1a3a8f" opacity="0.2"/>
+  <text x="200" y="240" text-anchor="middle" fill="#111827" font-family="system-ui,sans-serif" font-size="14" font-weight="700">Casa</text>
+</svg>

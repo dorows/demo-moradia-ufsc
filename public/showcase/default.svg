@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" fill="none">
+  <rect width="400" height="260" fill="#eef2fc"/>
+  <rect x="80" y="60" width="240" height="140" rx="12" fill="#fff" stroke="#c8d0e0" stroke-width="2"/>
+  <rect x="100" y="80" width="200" height="100" rx="6" fill="#4169e1" opacity="0.1"/>
+  <text x="200" y="240" text-anchor="middle" fill="#5f6b7c" font-family="system-ui,sans-serif" font-size="14" font-weight="700">Imóvel</text>
+</svg>

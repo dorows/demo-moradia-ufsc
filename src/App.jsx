@@ -248,11 +248,14 @@ function App() {
                 style={{ "--card-index": index % 6 }}
               >
                 <div className="listing-card__media">
-                  {listing.imageUrl ? (
-                    <img src={listing.imageUrl} alt="" loading="lazy" />
-                  ) : (
-                    <div className="listing-card__placeholder" />
-                  )}
+                  <img
+                    src={listing.imageUrl || "/showcase/default.svg"}
+                    alt=""
+                    loading="lazy"
+                    onError={(event) => {
+                      event.currentTarget.src = "/showcase/default.svg";
+                    }}
+                  />
                   <span className="listing-card__score">{listing.score}</span>
                   <span className="listing-card__source">OLX</span>
                 </div>
