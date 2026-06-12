@@ -3,7 +3,6 @@ import AnimatedRange from "./components/AnimatedRange.jsx";
 import AnimatedSelect from "./components/AnimatedSelect.jsx";
 import EmailShowcase from "./components/EmailShowcase.jsx";
 import OlxShowcase from "./components/OlxShowcase.jsx";
-import SiteLogo from "./components/SiteLogo.jsx";
 
 const currency = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -106,14 +105,10 @@ function App() {
 
   return (
     <main id="top">
-      <div className="section-shell">
-        <SiteLogo />
-      </div>
-
       <section className="hero section-shell">
         <nav className="topbar" aria-label="Navegação principal">
           <a className="brand" href="#top" aria-label="Moradias UFSC">
-            <img className="brand__logo" src="/logo.png" alt="" width={32} height={32} />
+            <img className="brand__logo" src="/logo.png" alt="" width={40} height={40} />
             Moradias UFSC
           </a>
           <div className="topbar__links">
