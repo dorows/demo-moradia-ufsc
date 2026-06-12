@@ -87,10 +87,70 @@ h1, h2, h3 {
   line-height: 1.65;
 }
 
+/* ─── Site logo ─── */
+
+.site-logo {
+  padding: 28px 0 8px;
+  text-align: center;
+}
+
+.site-logo__mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+.site-logo__img {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+}
+
+.site-logo__wordmark {
+  display: grid;
+  gap: 4px;
+}
+
+.site-logo__wordmark strong {
+  font-family: var(--display);
+  font-size: 1.5rem;
+  letter-spacing: -0.03em;
+}
+
+.site-logo__wordmark span {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.site-logo__ascii-wrap {
+  display: flex;
+  justify-content: center;
+  height: 200px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.site-logo__ascii {
+  margin: 0;
+  padding: 0;
+  color: var(--ink);
+  font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, monospace;
+  font-size: 5px;
+  line-height: 1;
+  white-space: pre;
+  opacity: 0.5;
+  user-select: none;
+  transform: scale(0.42);
+  transform-origin: top center;
+}
+
 /* ─── Nav & Hero ─── */
 
 .hero {
-  padding: 24px 0 40px;
+  padding: 16px 0 40px;
 }
 
 .topbar {
@@ -108,14 +168,10 @@ h1, h2, h3 {
   letter-spacing: -0.03em;
 }
 
-.brand span {
-  display: grid;
-  width: 34px;
-  height: 34px;
-  place-items: center;
-  border-radius: 10px;
-  color: #fff;
-  background: var(--royal);
+.brand__logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
 }
 
 .topbar__links {
@@ -1371,6 +1427,19 @@ h1, h2, h3 {
 @media (max-width: 640px) {
   .section-shell {
     width: min(100% - 22px, 1080px);
+  }
+
+  .site-logo__mark {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .site-logo__ascii-wrap {
+    height: 120px;
+  }
+
+  .site-logo__ascii {
+    transform: scale(0.3);
   }
 
   .topbar__links .nav-link:not(.nav-link--accent) {
