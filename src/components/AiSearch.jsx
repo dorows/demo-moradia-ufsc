@@ -43,7 +43,7 @@ export default function AiSearch({ listings, onRerank, onClear, disabled }) {
         throw new Error(data.error || data.message || `Erro ${response.status}`);
       }
 
-      onRerank(data.orderedIds ?? [], data.scores ?? {});
+      onRerank(data.orderedIds ?? [], data.scores ?? {}, trimmed);
       setReply(data.reply ?? "");
       setActive(true);
     } catch (err) {

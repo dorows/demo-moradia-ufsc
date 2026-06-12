@@ -657,6 +657,134 @@ h1, h2, h3 {
   color: var(--royal-deep);
 }
 
+/* ─── AI Best Deal Modal ─── */
+
+.ai-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(17, 24, 39, 0.55);
+  backdrop-filter: blur(4px);
+  animation: ai-modal-fade 0.25s var(--ease-out);
+}
+
+@keyframes ai-modal-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.ai-modal__dialog {
+  position: relative;
+  width: min(100%, 480px);
+  max-height: min(90vh, 720px);
+  overflow: auto;
+  padding: 28px 24px 24px;
+  border: 1px solid var(--border-strong);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 0 24px 64px rgba(17, 24, 39, 0.18);
+  animation: ai-modal-slide 0.35s var(--ease-spring);
+}
+
+@keyframes ai-modal-slide {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.ai-modal__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--muted);
+  background: var(--bg);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.ai-modal__close:hover {
+  border-color: var(--border-strong);
+  color: var(--ink);
+}
+
+.ai-modal__dialog h2 {
+  margin-bottom: 8px;
+  font-size: 1.5rem;
+}
+
+.ai-modal__query {
+  margin-bottom: 18px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.ai-modal__query em {
+  color: var(--ink);
+  font-style: normal;
+  font-weight: 600;
+}
+
+.ai-modal__card {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--bg);
+}
+
+.ai-modal__card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.ai-modal__card h3 {
+  margin-bottom: 14px;
+  font-size: 1.15rem;
+  line-height: 1.35;
+}
+
+.ai-modal__stats {
+  margin-bottom: 12px;
+}
+
+.ai-modal__relevance {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--royal-soft);
+  color: var(--royal-deep);
+  font-size: 0.65rem;
+  font-weight: 800;
+}
+
+.ai-modal__actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.ai-modal__actions .button {
+  justify-content: center;
+}
+
 /* ─── Animated Select ─── */
 
 .filter-deck {
@@ -1476,4 +1604,9 @@ h1, h2, h3 {
   }
 
   .olx-terminal__scan { display: none; }
+
+  .ai-modal,
+  .ai-modal__dialog {
+    animation: none;
+  }
 }

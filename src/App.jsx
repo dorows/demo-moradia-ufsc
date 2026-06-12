@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import AiBestDealModal from "./components/AiBestDealModal.jsx";
 import AiSearch from "./components/AiSearch.jsx";
 import AnimatedRange from "./components/AnimatedRange.jsx";
 import AnimatedSelect from "./components/AnimatedSelect.jsx";
@@ -43,6 +44,7 @@ function App() {
   });
   const [aiRankedIds, setAiRankedIds] = useState(null);
   const [aiScores, setAiScores] = useState({});
+  const [aiBestPick, setAiBestPick] = useState(null);
 
   const loadListings = useCallback(async () => {
     setLoading(true);
@@ -71,6 +73,7 @@ function App() {
   useEffect(() => {
     setAiRankedIds(null);
     setAiScores({});
+    setAiBestPick(null);
   }, [filters]);
 
   const propertyTypes = useMemo(
@@ -111,15 +114,21 @@ function App() {
     });
   }, [filteredListings, aiRankedIds]);
 
-  function handleAiRerank(orderedIds, scores) {
+  function handleAiRerank(orderedIds, scores, query) {
     setAiRankedIds(orderedIds);
     setAiScores(scores);
-    document.getElementById("demo")?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    const topId = orderedIds[0];
+    const listing = filteredListings.find((item) => item.id === topId);
+    if (listing) {
+      setAiBestPick({ listing, relevance: scores[topId], query });
+    }
   }
 
   function handleAiClear() {
     setAiRankedIds(null);
     setAiScores({});
+    setAiBestPick(null);
   }
 
   const bestListing = [...filteredListings].sort((a, b) => b.score - a.score)[0];
@@ -369,6 +378,8 @@ function App() {
       </section>
 
       <EmailShowcase />
+
+      <AiBestDealModal pick={aiBestPick} onClose={() => setAiBestPick(null)} />
     </main>
   );
 }
