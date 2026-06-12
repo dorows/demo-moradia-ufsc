@@ -108,7 +108,7 @@ function App() {
       <section className="hero section-shell">
         <nav className="topbar" aria-label="Navegação principal">
           <a className="brand" href="#top" aria-label="Moradias UFSC">
-            <span>M</span>
+            <img className="brand__logo" src="/logo.png" alt="" width={36} height={36} />
             Moradias UFSC
           </a>
           <div className="topbar__links">
