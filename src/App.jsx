@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import AiSearch from "./components/AiSearch.jsx";
 import AnimatedRange from "./components/AnimatedRange.jsx";
 import AnimatedSelect from "./components/AnimatedSelect.jsx";
 import EmailShowcase from "./components/EmailShowcase.jsx";
@@ -40,6 +41,8 @@ function App() {
     maxPrice: 1800,
     maxDistance: 3,
   });
+  const [aiRankedIds, setAiRankedIds] = useState(null);
+  const [aiScores, setAiScores] = useState({});
 
   const loadListings = useCallback(async () => {
     setLoading(true);
@@ -65,6 +68,11 @@ function App() {
     loadListings();
   }, [loadListings]);
 
+  useEffect(() => {
+    setAiRankedIds(null);
+    setAiScores({});
+  }, [filters]);
+
   const propertyTypes = useMemo(
     () => ["Todos", ...new Set(listings.map((item) => item.type))],
     [listings]
@@ -89,6 +97,30 @@ function App() {
       );
     });
   }, [filters, listings]);
+
+  const displayedListings = useMemo(() => {
+    if (!aiRankedIds?.length) {
+      return [...filteredListings].sort((a, b) => b.score - a.score);
+    }
+
+    const orderMap = new Map(aiRankedIds.map((id, index) => [id, index]));
+    return [...filteredListings].sort((a, b) => {
+      const rankA = orderMap.get(a.id) ?? Number.MAX_SAFE_INTEGER;
+      const rankB = orderMap.get(b.id) ?? Number.MAX_SAFE_INTEGER;
+      return rankA - rankB;
+    });
+  }, [filteredListings, aiRankedIds]);
+
+  function handleAiRerank(orderedIds, scores) {
+    setAiRankedIds(orderedIds);
+    setAiScores(scores);
+    document.getElementById("demo")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function handleAiClear() {
+    setAiRankedIds(null);
+    setAiScores({});
+  }
 
   const bestListing = [...filteredListings].sort((a, b) => b.score - a.score)[0];
   const featuredListing = bestListing ?? listings[0];
@@ -164,7 +196,6 @@ function App() {
         meta={meta}
         featuredListing={featuredListing}
         animatedListings={animatedListings}
-        loading={loading}
       />
 
       <section className="demo section-shell" id="demo">
@@ -186,6 +217,13 @@ function App() {
             </div>
           )}
         </div>
+
+        <AiSearch
+          listings={filteredListings}
+          onRerank={handleAiRerank}
+          onClear={handleAiClear}
+          disabled={loading}
+        />
 
         <div className="filter-deck">
           <AnimatedSelect
@@ -238,7 +276,7 @@ function App() {
             Array.from({ length: 6 }).map((_, index) => <ListingSkeleton key={index} />)}
 
           {!loading &&
-            filteredListings.map((listing, index) => (
+            displayedListings.map((listing, index) => (
               <a
                 className="listing-card listing-card--link"
                 href={listing.url}
@@ -250,9 +288,16 @@ function App() {
               >
                 <div className="listing-card__header">
                   <span className="listing-card__type">{listing.type}</span>
-                  <span className="listing-card__score" title="Score de custo-benefício">
-                    {listing.score}
-                  </span>
+                  <div className="listing-card__badges">
+                    {aiRankedIds && aiScores[listing.id] != null && (
+                      <span className="listing-card__ai" title="Relevância da busca por IA">
+                        IA
+                      </span>
+                    )}
+                    <span className="listing-card__score" title="Score de custo-benefício">
+                      {listing.score}
+                    </span>
+                  </div>
                 </div>
                 <h3>{listing.title}</h3>
                 <div className="listing-card__stats">
@@ -285,7 +330,7 @@ function App() {
               </a>
             ))}
 
-          {!loading && filteredListings.length === 0 && (
+          {!loading && displayedListings.length === 0 && (
             <div className="empty-state">
               <h3>Nenhum imóvel nesse recorte</h3>
               <p>Amplie o preço ou a distância para ver mais oportunidades.</p>

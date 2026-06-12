@@ -17,9 +17,7 @@ export default function OlxShowcase({
   meta,
   featuredListing,
   animatedListings,
-  loading,
 }) {
-  const isLive = meta?.source === "olx";
   const marqueeListings = [...listings, ...listings].slice(0, 16);
 
   return (
@@ -39,21 +37,6 @@ export default function OlxShowcase({
             o que faz sentido para estudantes — atualizado{" "}
             {meta?.updatedAt ? formatUpdatedAt(meta.updatedAt) : "em tempo real"}.
           </p>
-        </div>
-
-        <div className="olx-stats">
-          <article className="olx-stat">
-            <strong>{loading ? "…" : listings.length}</strong>
-            <span>anúncios indexados</span>
-          </article>
-          <article className="olx-stat">
-            <strong>{isLive ? "LIVE" : "DEMO"}</strong>
-            <span>{isLive ? "scraper ativo" : "modo fallback"}</span>
-          </article>
-          <article className="olx-stat">
-            <strong>~30m</strong>
-            <span>cache inteligente</span>
-          </article>
         </div>
       </header>
 

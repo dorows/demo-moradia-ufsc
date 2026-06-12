@@ -238,10 +238,6 @@ h1, h2, h3 {
 .olx-showcase__glow { display: none; }
 
 .olx-showcase__header {
-  display: grid;
-  grid-template-columns: 1.2fr auto;
-  gap: 24px;
-  align-items: start;
   margin-bottom: 28px;
 }
 
@@ -279,31 +275,6 @@ h1, h2, h3 {
   height: 7px;
   border-radius: 50%;
   background: var(--success);
-}
-
-.olx-stats {
-  display: grid;
-  gap: 8px;
-}
-
-.olx-stat {
-  padding: 14px 18px;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: var(--bg);
-  text-align: right;
-}
-
-.olx-stat strong {
-  display: block;
-  font-size: 1.3rem;
-  line-height: 1;
-}
-
-.olx-stat span {
-  color: var(--muted);
-  font-size: 0.72rem;
-  font-weight: 600;
 }
 
 .olx-pipeline {
@@ -598,6 +569,94 @@ h1, h2, h3 {
   margin-bottom: 0;
 }
 
+/* ─── AI Search ─── */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.ai-search {
+  margin-bottom: 24px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.ai-search .eyebrow {
+  margin-bottom: 12px;
+}
+
+.ai-search__form {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.ai-search__field {
+  flex: 1;
+  min-width: 0;
+}
+
+.ai-search__input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  color: var(--ink);
+  background: var(--bg);
+  font-size: 0.92rem;
+  transition: border-color 0.2s, box-shadow 0.25s var(--ease-out);
+}
+
+.ai-search__input:focus {
+  outline: none;
+  border-color: var(--royal);
+  box-shadow: 0 0 0 3px var(--royal-soft);
+}
+
+.ai-search__submit {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.ai-search__reply {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.ai-search__error {
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+
+.ai-search__clear {
+  margin-top: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--royal);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ai-search__clear:hover {
+  color: var(--royal-deep);
+}
+
 /* ─── Animated Select ─── */
 
 .filter-deck {
@@ -888,6 +947,22 @@ h1, h2, h3 {
   color: var(--royal-deep);
   font-size: 0.72rem;
   font-weight: 800;
+}
+
+.listing-card__badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.listing-card__ai {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
 }
 
 .listing-card__score {
@@ -1343,12 +1418,6 @@ h1, h2, h3 {
     grid-template-columns: 1fr;
   }
 
-  .olx-stats {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .olx-stat { text-align: center; }
-
   .listing-grid,
   .workflow-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1380,9 +1449,16 @@ h1, h2, h3 {
 
   .filter-deck,
   .listing-grid,
-  .workflow-grid,
-  .olx-stats {
+  .workflow-grid {
     grid-template-columns: 1fr;
+  }
+
+  .ai-search__form {
+    flex-direction: column;
+  }
+
+  .ai-search__submit {
+    width: 100%;
   }
 }
 
